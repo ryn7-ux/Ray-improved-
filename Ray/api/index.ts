@@ -27,7 +27,7 @@ async function generateAIContent(req: express.Request, prompt: string, isJson: b
     const anthropic = new Anthropic({ apiKey: key });
     
     const response = await anthropic.messages.create({
-      model: req.header('x-anthropic-model') || 'claude-3-haiku-20240307',
+      model: req.header('x-anthropic-model') || 'claude-3-5-haiku-20241022',
       max_tokens: 1500,
       messages: [{ role: "user", content: prompt }]
     });
@@ -40,7 +40,7 @@ async function generateAIContent(req: express.Request, prompt: string, isJson: b
     const ai = new GoogleGenAI({ apiKey: key });
     
     const response = await ai.models.generateContent({
-      model: req.header('x-gemini-model') || 'gemini-1.5-flash',
+      model: req.header('x-gemini-model') || 'gemini-2.5-flash',
       contents: prompt,
       config: isJson ? { responseMimeType: "application/json" } : undefined
     });
@@ -277,7 +277,7 @@ app.post("/api/verify-key", async (req, res) => {
     } else if (provider === 'anthropic') {
       const anthropic = new Anthropic({ apiKey: key });
       await anthropic.messages.create({
-        model: model || "claude-3-haiku-20240307",
+        model: model || "claude-3-5-haiku-20241022",
         max_tokens: 1,
         messages: [{ role: "user", content: "hi" }]
       });
@@ -286,7 +286,7 @@ app.post("/api/verify-key", async (req, res) => {
       // Gemini
       const ai = new GoogleGenAI({ apiKey: key });
       await ai.models.generateContent({
-        model: model || "gemini-1.5-flash",
+        model: model || "gemini-2.5-flash",
         contents: "hi",
         config: { maxOutputTokens: 1 }
       });
