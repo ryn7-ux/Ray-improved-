@@ -1,0 +1,6 @@
+{
+  "name": "RYN hub",
+  "description": "A personal lifestyle dashboard for tracking budgets, diet macros, fitness calories (powered by AI), and creative notes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
