@@ -52,11 +52,11 @@ export function FitnessView({ workouts, onUpdate, workoutPlan, onUpdateWorkoutPl
           'Content-Type': 'application/json', 
           'x-ai-provider': localStorage.getItem('lifehub_ai_provider')?.replace(/"/g, '') || 'gemini',
           'x-gemini-api-key': localStorage.getItem('lifehub_gemini_api_key')?.replace(/"/g, '') || '',
-          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-1.5-flash',
+          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-2.5-flash',
           'x-openai-api-key': localStorage.getItem('lifehub_openai_api_key')?.replace(/"/g, '') || '',
           'x-openai-model': localStorage.getItem('lifehub_openai_model')?.replace(/"/g, '') || 'gpt-4o-mini',
           'x-anthropic-api-key': localStorage.getItem('lifehub_anthropic_api_key')?.replace(/"/g, '') || '',
-          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-haiku-20240307'
+          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-5-haiku-20241022'
         },
         body: JSON.stringify({
           exercise,

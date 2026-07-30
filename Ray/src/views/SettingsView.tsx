@@ -7,13 +7,13 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
   const [isConfirming, setIsConfirming] = useState(false);
   const [aiProvider, setAiProvider] = useLocalStorage<string>('lifehub_ai_provider', 'gemini');
     const [geminiKey, setGeminiKey] = useLocalStorage<string>('lifehub_gemini_api_key', '');
-  const [geminiModel, setGeminiModel] = useLocalStorage<string>('lifehub_gemini_model', 'gemini-1.5-flash');
+  const [geminiModel, setGeminiModel] = useLocalStorage<string>('lifehub_gemini_model', 'gemini-2.5-flash');
 
     const [openAiKey, setOpenAiKey] = useLocalStorage<string>('lifehub_openai_api_key', '');
   const [openAiModel, setOpenAiModel] = useLocalStorage<string>('lifehub_openai_model', 'gpt-4o-mini');
 
     const [anthropicKey, setAnthropicKey] = useLocalStorage<string>('lifehub_anthropic_api_key', '');
-  const [anthropicModel, setAnthropicModel] = useLocalStorage<string>('lifehub_anthropic_model', 'claude-3-haiku-20240307');
+  const [anthropicModel, setAnthropicModel] = useLocalStorage<string>('lifehub_anthropic_model', 'claude-3-5-haiku-20241022');
 
   const [isValidating, setIsValidating] = useState(false);
   const [validationStatus, setValidationStatus] = useState<'idle' | 'valid' | 'invalid'>('idle');
@@ -133,7 +133,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                     type="text" 
                     value={geminiModel}
                     onChange={(e) => setGeminiModel(e.target.value)}
-                    placeholder="e.g. gemini-1.5-flash or gemini-2.5-flash"
+                    placeholder="e.g. gemini-2.5-flash or gemini-2.5-pro"
                     className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
