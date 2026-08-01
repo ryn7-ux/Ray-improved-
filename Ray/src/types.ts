@@ -62,6 +62,7 @@ export type Note = {
   id: string;
   content: string;
   date: string;
+  pinned?: boolean;
 };
 
 export type WorkoutPlanExercise = {
