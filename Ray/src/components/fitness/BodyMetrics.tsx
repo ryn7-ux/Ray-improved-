@@ -70,7 +70,7 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
 
         <div className="surface-panel p-6">
           <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Current BMI</p>
-          <p className="text-4xl font-mono font-bold text-indigo-400">
+          <p className="text-4xl font-mono font-bold text-emerald-400">
             {bmi || '--'}
           </p>
           <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-2">
@@ -91,7 +91,7 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
         <div className="lg:col-span-1 space-y-6">
           <form onSubmit={handleLogWeight} className="surface-panel p-6 space-y-4">
             <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg flex items-center gap-2">
-              <Plus className="w-5 h-5 text-indigo-400" /> Log Weight
+              <Plus className="w-5 h-5 text-emerald-400" /> Log Weight
             </h3>
             <div>
               <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Weight (kg)</label>
@@ -101,13 +101,13 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
                 required
                 value={weight}
                 onChange={e => setWeight(e.target.value)}
-                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                 placeholder="e.g. 75.5"
               />
             </div>
             <button
               type="submit"
-              className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors font-bold text-xs uppercase tracking-wider"
+              className="w-full py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-colors font-bold text-xs uppercase tracking-wider"
             >
               Log Today
             </button>

@@ -44,11 +44,11 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
           'Content-Type': 'application/json', 
           'x-ai-provider': localStorage.getItem('lifehub_ai_provider')?.replace(/"/g, '') || 'gemini',
           'x-gemini-api-key': localStorage.getItem('lifehub_gemini_api_key')?.replace(/"/g, '') || '',
-          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-2.5-flash',
+          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-1.5-flash',
           'x-openai-api-key': localStorage.getItem('lifehub_openai_api_key')?.replace(/"/g, '') || '',
           'x-openai-model': localStorage.getItem('lifehub_openai_model')?.replace(/"/g, '') || 'gpt-4o-mini',
           'x-anthropic-api-key': localStorage.getItem('lifehub_anthropic_api_key')?.replace(/"/g, '') || '',
-          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-5-haiku-20241022'
+          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-haiku-20240307'
         },
         body: JSON.stringify({ textInput: manualInput })
       });
@@ -98,11 +98,11 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
           'Content-Type': 'application/json', 
           'x-ai-provider': localStorage.getItem('lifehub_ai_provider')?.replace(/"/g, '') || 'gemini',
           'x-gemini-api-key': localStorage.getItem('lifehub_gemini_api_key')?.replace(/"/g, '') || '',
-          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-2.5-flash',
+          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-1.5-flash',
           'x-openai-api-key': localStorage.getItem('lifehub_openai_api_key')?.replace(/"/g, '') || '',
           'x-openai-model': localStorage.getItem('lifehub_openai_model')?.replace(/"/g, '') || 'gpt-4o-mini',
           'x-anthropic-api-key': localStorage.getItem('lifehub_anthropic_api_key')?.replace(/"/g, '') || '',
-          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-5-haiku-20241022'
+          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-haiku-20240307'
         },
         body: JSON.stringify({ goal: finalGoal, experience, types, equipment })
       });
@@ -178,13 +178,13 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-50 dark:bg-[#141414] border border-zinc-200 dark:border-zinc-800 p-6 rounded-2xl">
           <div>
             <h2 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-indigo-400" />
+              <Sparkles className="w-5 h-5 text-emerald-400" />
               Active Plan: {workoutPlan.goal}
             </h2>
             <div className="flex flex-wrap gap-2 mt-3">
               <span className="px-2 py-1 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs rounded-full">{workoutPlan.experience}</span>
               {workoutPlan.types.map(t => (
-                <span key={t} className="px-2 py-1 bg-indigo-900/30 text-indigo-300 text-xs rounded-full">{t}</span>
+                <span key={t} className="px-2 py-1 bg-emerald-900/30 text-emerald-300 text-xs rounded-full">{t}</span>
               ))}
             </div>
           </div>
@@ -257,7 +257,7 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h2 className="font-display text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
+            <Sparkles className="w-5 h-5 text-emerald-400" />
             AI Workout Architect
           </h2>
           <p className="text-zinc-500 dark:text-zinc-500 text-sm mt-2">Generate a program or paste your existing routine.</p>
@@ -291,13 +291,13 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
               value={manualInput}
               onChange={e => setManualInput(e.target.value)}
               placeholder="E.g., Monday: Chest and Triceps - Bench press 3x10, Tricep pushdowns 3x12. Tuesday: Rest..."
-              className="w-full h-48 px-4 py-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none text-sm"
+              className="w-full h-48 px-4 py-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 resize-none text-sm"
             />
           </div>
           <button
             onClick={handleParseManual}
             disabled={!manualInput || isGenerating}
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-zinc-200 dark:bg-zinc-800 disabled:text-zinc-500 dark:text-zinc-500 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-200 dark:bg-zinc-800 disabled:text-zinc-500 dark:text-zinc-500 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isGenerating ? (
               <><Loader2 className="w-5 h-5 animate-spin" /> Parsing...</>
@@ -317,14 +317,14 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
               <button
                 key={g}
                 onClick={() => setGoal(g)}
-                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${goal === g ? 'bg-indigo-600 text-white border-indigo-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${goal === g ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
               >
                 {g}
               </button>
             ))}
             <button
               onClick={() => setGoal('Custom')}
-              className={`px-4 py-2 rounded-lg text-sm border transition-colors ${goal === 'Custom' ? 'bg-indigo-600 text-white border-indigo-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+              className={`px-4 py-2 rounded-lg text-sm border transition-colors ${goal === 'Custom' ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
             >
               Custom
             </button>
@@ -349,7 +349,7 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
               <button
                 key={e}
                 onClick={() => setExperience(e)}
-                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${experience === e ? 'bg-indigo-600 text-white border-indigo-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${experience === e ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
               >
                 {e}
               </button>
@@ -366,7 +366,7 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
               <button
                 key={t}
                 onClick={() => toggleSelection(t, types, setTypes)}
-                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${types.includes(t) ? 'bg-indigo-600 text-white border-indigo-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${types.includes(t) ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
               >
                 {t}
               </button>
@@ -392,7 +392,7 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
         <button
           onClick={handleGenerate}
           disabled={!goal || !experience || types.length === 0 || isGenerating}
-          className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-zinc-200 dark:bg-zinc-800 disabled:text-zinc-500 dark:text-zinc-500 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 mt-4"
+          className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-200 dark:bg-zinc-800 disabled:text-zinc-500 dark:text-zinc-500 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 mt-4"
         >
           {isGenerating ? (
             <>

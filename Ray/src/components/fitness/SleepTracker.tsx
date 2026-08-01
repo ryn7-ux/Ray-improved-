@@ -93,7 +93,7 @@ export function SleepTracker({ sleepLogs, onUpdateSleepLogs, selectedDate }: Sle
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <form onSubmit={handleAddSleep} className="lg:col-span-1 surface-panel p-6 space-y-4">
           <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg flex items-center gap-2">
-            <Moon className="w-5 h-5 text-indigo-400" /> Log Sleep
+            <Moon className="w-5 h-5 text-emerald-400" /> Log Sleep
           </h3>
           
           <div>
@@ -103,7 +103,7 @@ export function SleepTracker({ sleepLogs, onUpdateSleepLogs, selectedDate }: Sle
               required
               value={bedTime}
               onChange={e => setBedTime(e.target.value)}
-              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
             />
           </div>
 
@@ -114,13 +114,13 @@ export function SleepTracker({ sleepLogs, onUpdateSleepLogs, selectedDate }: Sle
               required
               value={wakeTime}
               onChange={e => setWakeTime(e.target.value)}
-              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors font-bold text-xs uppercase tracking-wider mt-4"
+            className="w-full py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-colors font-bold text-xs uppercase tracking-wider mt-4"
           >
             Log Sleep Session
           </button>
@@ -131,7 +131,7 @@ export function SleepTracker({ sleepLogs, onUpdateSleepLogs, selectedDate }: Sle
             <div key={log.id} className="surface-panel p-4 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-zinc-200 dark:bg-zinc-800 rounded-xl">
-                  <Moon className="w-5 h-5 text-indigo-400" />
+                  <Moon className="w-5 h-5 text-emerald-400" />
                 </div>
                 <div>
                   <p className="text-zinc-900 dark:text-zinc-100 font-medium">
