@@ -7,13 +7,13 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
   const [isConfirming, setIsConfirming] = useState(false);
   const [aiProvider, setAiProvider] = useLocalStorage<string>('lifehub_ai_provider', 'gemini');
     const [geminiKey, setGeminiKey] = useLocalStorage<string>('lifehub_gemini_api_key', '');
-  const [geminiModel, setGeminiModel] = useLocalStorage<string>('lifehub_gemini_model', 'gemini-2.5-flash');
+  const [geminiModel, setGeminiModel] = useLocalStorage<string>('lifehub_gemini_model', 'gemini-1.5-flash');
 
     const [openAiKey, setOpenAiKey] = useLocalStorage<string>('lifehub_openai_api_key', '');
   const [openAiModel, setOpenAiModel] = useLocalStorage<string>('lifehub_openai_model', 'gpt-4o-mini');
 
     const [anthropicKey, setAnthropicKey] = useLocalStorage<string>('lifehub_anthropic_api_key', '');
-  const [anthropicModel, setAnthropicModel] = useLocalStorage<string>('lifehub_anthropic_model', 'claude-3-5-haiku-20241022');
+  const [anthropicModel, setAnthropicModel] = useLocalStorage<string>('lifehub_anthropic_model', 'claude-3-haiku-20240307');
 
   const [isValidating, setIsValidating] = useState(false);
   const [validationStatus, setValidationStatus] = useState<'idle' | 'valid' | 'invalid'>('idle');
@@ -104,7 +104,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
       <div className="surface-panel p-6 space-y-6">
         <div>
           <h2 className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 mb-2">
-            <Key className="w-5 h-5 text-indigo-400" /> AI Configuration
+            <Key className="w-5 h-5 text-emerald-400" /> AI Configuration
           </h2>
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
             To use the AI-powered features, choose your preferred AI provider and enter its API key. 
@@ -117,7 +117,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
               <select
                 value={aiProvider}
                 onChange={(e) => setAiProvider(e.target.value)}
-                className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500"
               >
                 <option value="gemini">Google Gemini</option>
                 <option value="openai">OpenAI (ChatGPT)</option>
@@ -133,8 +133,8 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                     type="text" 
                     value={geminiModel}
                     onChange={(e) => setGeminiModel(e.target.value)}
-                    placeholder="e.g. gemini-2.5-flash or gemini-2.5-pro"
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+                    placeholder="e.g. gemini-1.5-flash or gemini-2.5-flash"
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <label className="block text-xs font-medium text-zinc-500 dark:text-zinc-500 mb-1">Gemini API Key</label>
@@ -144,7 +144,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                     value={geminiKey}
                     onChange={(e) => setGeminiKey(e.target.value)}
                     placeholder="AIzaSy..."
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 pr-10 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 pr-10 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     {isValidating ? (
@@ -157,7 +157,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                   </div>
                 </div>
                 <p className="text-xs text-zinc-600 mt-2">
-                  Get a free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">Google AI Studio</a>.
+                  Get a free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">Google AI Studio</a>.
                 </p>
                 {validationStatus === 'invalid' && (
                    <p className="text-xs text-rose-500 mt-2">{validationError || 'Invalid API Key or Model.'}</p>
@@ -174,7 +174,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                     value={openAiModel}
                     onChange={(e) => setOpenAiModel(e.target.value)}
                     placeholder="e.g. gpt-4o-mini or gpt-4-turbo"
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <label className="block text-xs font-medium text-zinc-500 dark:text-zinc-500 mb-1">OpenAI API Key</label>
@@ -184,7 +184,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                     value={openAiKey}
                     onChange={(e) => setOpenAiKey(e.target.value)}
                     placeholder="sk-proj-..."
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 pr-10 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 pr-10 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     {isValidating ? (
@@ -197,7 +197,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                   </div>
                 </div>
                 <p className="text-xs text-zinc-600 mt-2">
-                  Get an API key from your <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">OpenAI Dashboard</a>.
+                  Get an API key from your <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">OpenAI Dashboard</a>.
                 </p>
                 {validationStatus === 'invalid' && (
                    <p className="text-xs text-rose-500 mt-2">{validationError || 'Invalid API Key or Model.'}</p>
@@ -214,7 +214,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                     value={anthropicModel}
                     onChange={(e) => setAnthropicModel(e.target.value)}
                     placeholder="e.g. claude-3-5-sonnet-20241022"
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <label className="block text-xs font-medium text-zinc-500 dark:text-zinc-500 mb-1">Anthropic API Key</label>
@@ -224,7 +224,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                     value={anthropicKey}
                     onChange={(e) => setAnthropicKey(e.target.value)}
                     placeholder="sk-ant-..."
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 pr-10 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 pr-10 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     {isValidating ? (
@@ -237,7 +237,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
                   </div>
                 </div>
                 <p className="text-xs text-zinc-600 mt-2">
-                  Get an API key from your <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">Anthropic Console</a>.
+                  Get an API key from your <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">Anthropic Console</a>.
                 </p>
                 {validationStatus === 'invalid' && (
                    <p className="text-xs text-rose-500 mt-2">{validationError || 'Invalid API Key or Model.'}</p>
@@ -248,7 +248,7 @@ export function SettingsView({ onReplayWelcome }: { onReplayWelcome?: () => void
         </div>
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6">
           <h2 className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 mb-2">
-            <ShieldCheck className="w-5 h-5 text-indigo-400" /> Data Privacy & Storage
+            <ShieldCheck className="w-5 h-5 text-emerald-400" /> Data Privacy & Storage
           </h2>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             All your data is stored locally in your browser's <strong className="text-zinc-800 dark:text-zinc-200">Local Storage</strong>. 

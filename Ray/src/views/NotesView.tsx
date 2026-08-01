@@ -43,13 +43,13 @@ export function NotesView({ notes, onUpdate }: NotesViewProps) {
           value={content}
           onChange={e => setContent(e.target.value)}
           rows={4}
-          className="w-full px-4 py-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none transition-colors"
+          className="w-full px-4 py-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 resize-none transition-colors"
           placeholder="Jot down thoughts, ideas, or reminders..."
         />
         <div className="flex justify-end">
           <button
             type="submit"
-            className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-500 transition-colors font-bold text-xs uppercase tracking-wider disabled:opacity-50"
+            className="flex items-center gap-2 bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-500 transition-colors font-bold text-xs uppercase tracking-wider disabled:opacity-50"
             disabled={!content.trim()}
           >
             <Plus className="w-4 h-4" /> Save Note

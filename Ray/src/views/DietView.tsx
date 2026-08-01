@@ -254,14 +254,14 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
             <h2 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg">Macro Architect</h2>
             <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider">Daily Intake</p>
           </div>
-          <div className="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs text-indigo-400 font-mono">
+          <div className="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs text-emerald-400 font-mono">
             {totalCalories.toFixed(0)} kcal
           </div>
         </div>
 
         <div className="flex justify-around items-center py-4">
           <div className="text-center">
-            <div className="w-16 h-16 rounded-full border-4 border-indigo-500 flex items-center justify-center mb-2 mx-auto">
+            <div className="w-16 h-16 rounded-full border-4 border-emerald-500 flex items-center justify-center mb-2 mx-auto">
               <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{totalProtein.toFixed(0)}g</span>
             </div>
             <p className="text-[10px] uppercase font-bold text-zinc-500 dark:text-zinc-500">Protein</p>
@@ -281,23 +281,23 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
         </div>
       </div>
 
-      <div className="bg-indigo-900/10 border border-indigo-900/30 p-5 rounded-2xl flex flex-col gap-3">
+      <div className="bg-emerald-900/10 border border-emerald-900/30 p-5 rounded-2xl flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-display font-semibold text-indigo-400 flex items-center gap-2 text-sm uppercase tracking-wider">
+          <h3 className="font-display font-semibold text-emerald-400 flex items-center gap-2 text-sm uppercase tracking-wider">
             <Sparkles className="w-4 h-4" /> Planner Insight
           </h3>
           <button
             onClick={getDietFeedback}
             disabled={loadingFeedback || totalCalories === 0}
-            className="text-[10px] bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 px-3 py-1.5 rounded hover:bg-indigo-500/30 transition-colors disabled:opacity-50 font-bold uppercase tracking-wider"
+            className="text-[10px] bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-3 py-1.5 rounded hover:bg-emerald-500/30 transition-colors disabled:opacity-50 font-bold uppercase tracking-wider"
           >
             {loadingFeedback ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Analyze'}
           </button>
         </div>
         {aiFeedback ? (
-          <p className="text-indigo-200 text-sm leading-snug">{aiFeedback}</p>
+          <p className="text-emerald-200 text-sm leading-snug">{aiFeedback}</p>
         ) : (
-          <p className="text-indigo-200/50 text-sm italic">Log food and request analysis to get personalized insights.</p>
+          <p className="text-emerald-200/50 text-sm italic">Log food and request analysis to get personalized insights.</p>
         )}
       </div>
 
@@ -306,8 +306,8 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
           <form onSubmit={handleAddFood} className="surface-panel p-6 space-y-4">
             <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg mb-4">Log Nutrition</h3>
 
-            <div className="mb-6 p-4 bg-indigo-900/10 border border-indigo-900/30 rounded-xl space-y-3">
-              <label className="block text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+            <div className="mb-6 p-4 bg-emerald-900/10 border border-emerald-900/30 rounded-xl space-y-3">
+              <label className="block text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
                 <Sparkles className="w-3 h-3" /> AI Quick Add
               </label>
               <textarea
@@ -315,17 +315,17 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
                 onChange={e => setMealDescription(e.target.value)}
                 onKeyDown={handleMealDescriptionKeyDown}
                 placeholder="e.g. 4 eggs, 1 slice of toast, 1 tbsp butter"
-                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-indigo-900/50 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors text-sm resize-none h-20"
+                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-emerald-900/50 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors text-sm resize-none h-20"
               />
               <button
                 type="button"
                 onClick={addViaAI}
                 disabled={isEstimating || !mealDescription}
-                className="w-full py-1.5 bg-indigo-500/20 text-indigo-300 rounded hover:bg-indigo-500/30 transition-colors font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-1.5 bg-emerald-500/20 text-emerald-300 rounded hover:bg-emerald-500/30 transition-colors font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isEstimating ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Split & Add'}
               </button>
-              <p className="text-[10px] text-indigo-300/60">Describe what you ate and it's estimated + logged in one step. Press Enter to add.</p>
+              <p className="text-[10px] text-emerald-300/60">Describe what you ate and it's estimated + logged in one step. Press Enter to add.</p>
 
               {lastAdded && (
                 <div className="flex items-center justify-between gap-2 p-2 bg-emerald-900/20 border border-emerald-700/30 rounded-lg text-xs">
@@ -361,7 +361,7 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
                 required
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                 placeholder="e.g. Chicken Salad"
               />
             </div>
@@ -372,7 +372,7 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
                 required
                 value={calories}
                 onChange={e => setCalories(e.target.value)}
-                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
               />
             </div>
             <div className="grid grid-cols-3 gap-2">
@@ -382,7 +382,7 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
                   type="number"
                   value={protein}
                   onChange={e => setProtein(e.target.value)}
-                  className="w-full px-2 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors text-sm"
+                  className="w-full px-2 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors text-sm"
                 />
               </div>
               <div>
@@ -391,7 +391,7 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
                   type="number"
                   value={fat}
                   onChange={e => setFat(e.target.value)}
-                  className="w-full px-2 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors text-sm"
+                  className="w-full px-2 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors text-sm"
                 />
               </div>
               <div>
@@ -400,13 +400,13 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
                   type="number"
                   value={carbs}
                   onChange={e => setCarbs(e.target.value)}
-                  className="w-full px-2 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors text-sm"
+                  className="w-full px-2 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors text-sm"
                 />
               </div>
             </div>
             <button
               type="submit"
-              className="w-full mt-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
+              className="w-full mt-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-colors font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" /> Add Food
             </button>
@@ -508,7 +508,7 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
                     <div>
                       <p className="font-medium text-zinc-800 dark:text-zinc-200 text-sm">{food.name}</p>
                       <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider mt-1">
-                        <span className="text-indigo-400">P: {food.protein}g</span>
+                        <span className="text-emerald-400">P: {food.protein}g</span>
                         <span className="text-amber-500">F: {food.fat}g</span>
                         <span className="text-zinc-500 dark:text-zinc-500">C: {food.carbs}g</span>
                       </div>

@@ -52,11 +52,11 @@ export function FitnessView({ workouts, onUpdate, workoutPlan, onUpdateWorkoutPl
           'Content-Type': 'application/json', 
           'x-ai-provider': localStorage.getItem('lifehub_ai_provider')?.replace(/"/g, '') || 'gemini',
           'x-gemini-api-key': localStorage.getItem('lifehub_gemini_api_key')?.replace(/"/g, '') || '',
-          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-2.5-flash',
+          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-1.5-flash',
           'x-openai-api-key': localStorage.getItem('lifehub_openai_api_key')?.replace(/"/g, '') || '',
           'x-openai-model': localStorage.getItem('lifehub_openai_model')?.replace(/"/g, '') || 'gpt-4o-mini',
           'x-anthropic-api-key': localStorage.getItem('lifehub_anthropic_api_key')?.replace(/"/g, '') || '',
-          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-5-haiku-20241022'
+          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-haiku-20240307'
         },
         body: JSON.stringify({
           exercise,
@@ -212,7 +212,7 @@ export function FitnessView({ workouts, onUpdate, workoutPlan, onUpdateWorkoutPl
                 required
                 value={exercise}
                 onChange={e => setExercise(e.target.value)}
-                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                 placeholder="e.g. Pushups, Running"
               />
             </div>
@@ -223,7 +223,7 @@ export function FitnessView({ workouts, onUpdate, workoutPlan, onUpdateWorkoutPl
                   type="number"
                   value={reps}
                   onChange={e => setReps(e.target.value)}
-                  className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                   placeholder="Optional"
                 />
               </div>
@@ -233,7 +233,7 @@ export function FitnessView({ workouts, onUpdate, workoutPlan, onUpdateWorkoutPl
                   type="number"
                   value={duration}
                   onChange={e => setDuration(e.target.value)}
-                  className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                   placeholder="Optional"
                 />
               </div>
@@ -246,7 +246,7 @@ export function FitnessView({ workouts, onUpdate, workoutPlan, onUpdateWorkoutPl
             <button
               type="submit"
               disabled={isEstimating || !exercise}
-              className="w-full mt-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full mt-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-colors font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isEstimating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
               {isEstimating ? 'Estimating...' : 'Log Exercise'}
@@ -263,7 +263,7 @@ export function FitnessView({ workouts, onUpdate, workoutPlan, onUpdateWorkoutPl
               <div className="space-y-3">
                 {workouts.map(workout => (
                   <div key={workout.id} className="flex items-center gap-4 p-3 bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 group transition-colors hover:border-zinc-300 dark:border-zinc-700">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs uppercase">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs uppercase">
                       {workout.exercise.substring(0, 2)}
                     </div>
                     <div className="flex-1">
