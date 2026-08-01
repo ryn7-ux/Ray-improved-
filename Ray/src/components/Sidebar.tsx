@@ -24,7 +24,7 @@ export function Sidebar({ currentView, onChangeView, theme, toggleTheme }: Sideb
     <div className="w-full md:w-64 bg-zinc-50 dark:bg-[#0d0d0d] border-r border-zinc-200 dark:border-zinc-800 flex md:flex-col p-4 overflow-x-auto z-10 sticky top-0 md:h-screen">
       <div className="hidden md:flex items-center justify-between gap-2 mb-8 px-2">
         <h1 className="font-display text-zinc-900 dark:text-zinc-100 font-bold tracking-tight text-2xl italic">
-          RYN<span className="text-indigo-500">HUB</span>
+          RYN<span className="text-emerald-500">HUB</span>
         </h1>
         <button 
           onClick={toggleTheme} 
@@ -40,13 +40,13 @@ export function Sidebar({ currentView, onChangeView, theme, toggleTheme }: Sideb
             key={item.id}
             onClick={() => onChangeView(item.id)}
             className={cn(
-              "flex items-center gap-3 px-3 py-3 rounded-lg text-xs font-bold transition-all duration-200",
+              "flex items-center gap-3 px-3 py-3 rounded-lg text-xs font-bold transition-all duration-200 border-l-2 md:border-l-2 border-transparent",
               currentView === item.id
-                ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-zinc-800/50 border border-indigo-200 dark:border-zinc-700/50"
+                ? "text-zinc-900 dark:text-zinc-50 bg-zinc-100 dark:bg-zinc-900/70 border-emerald-500"
                 : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800/30"
             )}
           >
-            {item.icon}
+            <span className={currentView === item.id ? "text-emerald-500" : ""}>{item.icon}</span>
             <span className="hidden md:block">{item.label}</span>
           </button>
         ))}

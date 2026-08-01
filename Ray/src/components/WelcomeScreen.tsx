@@ -34,7 +34,7 @@ export function WelcomeScreen({ onComplete }: { onComplete: () => void }) {
               rotate: stage > 0 ? 0 : -15
             }}
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
-            className="w-20 h-20 mb-6 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-indigo-500/20"
+            className="w-20 h-20 mb-6 bg-gradient-to-tr from-emerald-500 to-purple-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/20"
           >
             <Sparkles className="w-10 h-10 text-white" />
           </motion.div>
