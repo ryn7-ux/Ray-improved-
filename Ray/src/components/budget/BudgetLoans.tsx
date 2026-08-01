@@ -66,13 +66,13 @@ export function BudgetLoans({ loans, onUpdateLoans, repayments, onUpdateRepaymen
       <div className="flex justify-between items-center surface-panel p-6">
         <div>
           <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg flex items-center gap-2">
-            <Handshake className="w-5 h-5 text-indigo-400" /> Lending & Borrowing
+            <Handshake className="w-5 h-5 text-emerald-400" /> Lending & Borrowing
           </h3>
           <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">Standalone peer-to-peer ledger</p>
         </div>
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold flex items-center gap-2"
+          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-bold flex items-center gap-2"
         >
           <Plus className="w-4 h-4" /> New Contract
         </button>
@@ -81,7 +81,7 @@ export function BudgetLoans({ loans, onUpdateLoans, repayments, onUpdateRepaymen
       {isAdding && (
         <form onSubmit={handleAddLoan} className="bg-[#1a1a1a] p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 space-y-4">
           <div className="flex rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 mb-4">
-            <button type="button" className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider ${direction === 'given' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-white dark:bg-zinc-950 text-zinc-500 dark:text-zinc-500'}`} onClick={() => setDirection('given')}>I am lending out</button>
+            <button type="button" className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider ${direction === 'given' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white dark:bg-zinc-950 text-zinc-500 dark:text-zinc-500'}`} onClick={() => setDirection('given')}>I am lending out</button>
             <button type="button" className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider ${direction === 'received' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white dark:bg-zinc-950 text-zinc-500 dark:text-zinc-500'}`} onClick={() => setDirection('received')}>I am borrowing</button>
           </div>
 
@@ -106,7 +106,7 @@ export function BudgetLoans({ loans, onUpdateLoans, repayments, onUpdateRepaymen
             </div>
           )}
 
-          <button type="submit" className="w-full py-2 bg-indigo-600 text-white rounded text-sm font-bold mt-2">Save Contract</button>
+          <button type="submit" className="w-full py-2 bg-emerald-600 text-white rounded text-sm font-bold mt-2">Save Contract</button>
         </form>
       )}
 
@@ -122,7 +122,7 @@ export function BudgetLoans({ loans, onUpdateLoans, repayments, onUpdateRepaymen
               </div>
               
               <div className="flex items-center gap-3 mb-4">
-                <div className={`p-2 rounded-lg ${isGiven ? 'bg-indigo-500/20 text-indigo-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                <div className={`p-2 rounded-lg ${isGiven ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
                   {isGiven ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
                 </div>
                 <div>
@@ -138,7 +138,7 @@ export function BudgetLoans({ loans, onUpdateLoans, repayments, onUpdateRepaymen
                 </div>
                 <div>
                   <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider">Outstanding</p>
-                  <p className={`text-lg font-mono font-bold ${isSettled ? 'text-zinc-500 dark:text-zinc-500' : (isGiven ? 'text-indigo-400' : 'text-rose-400')}`}>
+                  <p className={`text-lg font-mono font-bold ${isSettled ? 'text-zinc-500 dark:text-zinc-500' : (isGiven ? 'text-emerald-400' : 'text-rose-400')}`}>
                     {loan.outstandingBalance.toFixed(2)}
                   </p>
                 </div>

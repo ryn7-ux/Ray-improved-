@@ -113,9 +113,9 @@ export function BudgetOverview({
           <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Total Cash</p>
           <p className="text-3xl font-mono font-bold text-zinc-900 dark:text-zinc-100">{totalCash.toFixed(2)}</p>
         </div>
-        <div className="bg-indigo-900/20 border border-indigo-900/50 rounded-2xl p-6">
-          <p className="text-xs text-indigo-400 uppercase tracking-wider mb-2">Master Pool</p>
-          <p className={`text-3xl font-mono font-bold ${masterPool < 0 ? 'text-red-400' : 'text-indigo-400'}`}>
+        <div className="bg-emerald-900/20 border border-emerald-900/50 rounded-2xl p-6">
+          <p className="text-xs text-emerald-400 uppercase tracking-wider mb-2">Master Pool</p>
+          <p className={`text-3xl font-mono font-bold ${masterPool < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
             {masterPool.toFixed(2)}
           </p>
           {masterPool < 0 && <p className="text-xs text-red-400 mt-2">Overbudgeted!</p>}
@@ -139,7 +139,7 @@ export function BudgetOverview({
             </button>
             <button 
               onClick={() => setIsAddingBucket(!isAddingBucket)}
-              className="px-3 py-1.5 bg-indigo-600/20 text-indigo-400 rounded hover:bg-indigo-600/30 transition-colors font-bold text-xs uppercase tracking-wider flex items-center gap-2"
+              className="px-3 py-1.5 bg-emerald-600/20 text-emerald-400 rounded hover:bg-emerald-600/30 transition-colors font-bold text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <Plus className="w-3 h-3" /> Add Bucket
             </button>
@@ -167,7 +167,7 @@ export function BudgetOverview({
                 <input required type="number" value={newBucketTarget} onChange={e => setNewBucketTarget(e.target.value)} className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg text-sm" placeholder="5000" />
               </div>
             )}
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded text-sm font-bold w-full hover:bg-indigo-500">Save Bucket</button>
+            <button type="submit" className="px-4 py-2 bg-emerald-600 text-white rounded text-sm font-bold w-full hover:bg-emerald-500">Save Bucket</button>
           </form>
         )}
 
@@ -176,7 +176,7 @@ export function BudgetOverview({
           {buckets.map(b => {
             if (editingBucketId === b.id) {
               return (
-                <div key={b.id} className="bg-[#1a1a1a] p-4 rounded-xl border border-indigo-500/50 flex flex-col md:flex-row items-center gap-4">
+                <div key={b.id} className="bg-[#1a1a1a] p-4 rounded-xl border border-emerald-500/50 flex flex-col md:flex-row items-center gap-4">
                   <div className="grid grid-cols-2 gap-4 flex-1 w-full">
                     <div>
                       <input required value={editBucketName} onChange={e => setEditBucketName(e.target.value)} className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-lg text-sm" placeholder="Bucket Name" />
@@ -197,7 +197,7 @@ export function BudgetOverview({
                     <button onClick={() => setEditingBucketId(null)} className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-800 rounded">
                       <X className="w-4 h-4" />
                     </button>
-                    <button onClick={() => handleSaveEdit(b.id)} className="p-2 text-white bg-indigo-600 hover:bg-indigo-500 rounded">
+                    <button onClick={() => handleSaveEdit(b.id)} className="p-2 text-white bg-emerald-600 hover:bg-emerald-500 rounded">
                       <Check className="w-4 h-4" />
                     </button>
                   </div>
@@ -218,7 +218,7 @@ export function BudgetOverview({
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h4 className="text-zinc-800 dark:text-zinc-200 font-medium">{b.name}</h4>
-                      <button onClick={() => handleStartEdit(b)} className="text-zinc-600 hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => handleStartEdit(b)} className="text-zinc-600 hover:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Edit2 className="w-3 h-3" />
                       </button>
                       <button onClick={() => handleDeleteBucket(b.id)} className="text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">

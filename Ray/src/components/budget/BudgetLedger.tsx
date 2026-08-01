@@ -69,7 +69,7 @@ export function BudgetLedger({ transactions, onUpdateTransactions, buckets }: Bu
             <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Amount</label>
             <input
               type="number" step="0.01" required value={amount} onChange={e => setAmount(e.target.value)}
-              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors"
               placeholder="0.00"
             />
           </div>
@@ -78,7 +78,7 @@ export function BudgetLedger({ transactions, onUpdateTransactions, buckets }: Bu
             <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Label/Payee</label>
             <input
               type="text" required value={category} onChange={e => setCategory(e.target.value)}
-              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors"
               placeholder="e.g. Grocery Store"
             />
           </div>
@@ -88,7 +88,7 @@ export function BudgetLedger({ transactions, onUpdateTransactions, buckets }: Bu
               <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Assign to Bucket</label>
               <select
                 value={bucketId} onChange={e => setBucketId(e.target.value)}
-                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors"
               >
                 <option value="">-- Unallocated (Master Pool) --</option>
                 {buckets.map(b => (
@@ -102,7 +102,7 @@ export function BudgetLedger({ transactions, onUpdateTransactions, buckets }: Bu
             <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Notes</label>
             <input
               type="text" value={description} onChange={e => setDescription(e.target.value)}
-              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors"
               placeholder="Optional"
             />
           </div>
