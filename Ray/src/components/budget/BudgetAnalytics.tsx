@@ -8,10 +8,11 @@ interface BudgetAnalyticsProps {
   buckets: Bucket[];
 }
 
-const COLORS = ['#6366f1', '#10b981', '#f43f5e', '#eab308', '#3b82f6', '#8b5cf6', '#ec4899'];
+// Emerald-led palette to stay consistent with the app's accent color instead of the old indigo-first set.
+const COLORS = ['#10b981', '#34d399', '#f43f5e', '#eab308', '#3b82f6', '#8b5cf6', '#ec4899'];
 
 export function BudgetAnalytics({ transactions, buckets }: BudgetAnalyticsProps) {
-  
+
   // 1. Categorical Breakdown (Expenses by Bucket)
   const expensesByBucket = useMemo(() => {
     const expenses = transactions.filter(t => t.type === 'expense');
@@ -31,7 +32,7 @@ export function BudgetAnalytics({ transactions, buckets }: BudgetAnalyticsProps)
     const data = [];
     for (let i = 6; i >= 0; i--) {
       const date = subDays(new Date(), i);
-      const dailyExpenses = transactions.filter(t => 
+      const dailyExpenses = transactions.filter(t =>
         t.type === 'expense' && isSameDay(new Date(t.date), date)
       );
       const sum = dailyExpenses.reduce((acc, t) => acc + t.amount, 0);
@@ -78,8 +79,8 @@ export function BudgetAnalytics({ transactions, buckets }: BudgetAnalyticsProps)
                   ))}
                 </Pie>
                 <RechartsTooltip content={<CustomTooltip />} />
-                <Legend 
-                  wrapperStyle={{ fontSize: '12px', color: '#a1a1aa' }} 
+                <Legend
+                  wrapperStyle={{ fontSize: '12px', color: '#a1a1aa' }}
                   iconType="circle"
                 />
               </PieChart>

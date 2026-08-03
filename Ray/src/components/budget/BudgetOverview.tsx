@@ -13,13 +13,13 @@ interface BudgetOverviewProps {
   masterPool: number;
 }
 
-export function BudgetOverview({ 
-  transactions, 
-  buckets, 
-  onUpdateBuckets, 
+export function BudgetOverview({
+  transactions,
+  buckets,
+  onUpdateBuckets,
   loans,
   totalCash,
-  masterPool 
+  masterPool
 }: BudgetOverviewProps) {
   const [isAddingBucket, setIsAddingBucket] = useState(false);
   const [newBucketName, setNewBucketName] = useState('');
@@ -63,13 +63,19 @@ export function BudgetOverview({
   const handleAssignMoney = (bucketId: string) => {
     const amount = parseFloat(assignAmounts[bucketId] || '0');
     if (isNaN(amount) || amount === 0) return;
-    onUpdateBuckets(buckets.map(b => 
+    onUpdateBuckets(buckets.map(b =>
       b.id === bucketId ? { ...b, assignedAmount: b.assignedAmount + amount } : b
     ));
     setAssignAmounts(prev => ({ ...prev, [bucketId]: '' }));
   };
 
   const handleDeleteBucket = (id: string) => {
+    const bucket = buckets.find(b => b.id === id);
+    const balance = bucket ? getBucketBalance(bucket) : 0;
+    const warning = balance !== 0
+      ? `This bucket still has a balance of ${balance.toFixed(2)}. Delete it anyway? This cannot be undone.`
+      : 'Delete this bucket? This cannot be undone.';
+    if (!confirm(warning)) return;
     onUpdateBuckets(buckets.filter(b => b.id !== id));
   };
 
@@ -82,10 +88,10 @@ export function BudgetOverview({
 
   const handleSaveEdit = (id: string) => {
     if (!editBucketName) return;
-    onUpdateBuckets(buckets.map(b => 
-      b.id === id ? { 
-        ...b, 
-        name: editBucketName, 
+    onUpdateBuckets(buckets.map(b =>
+      b.id === id ? {
+        ...b,
+        name: editBucketName,
         type: editBucketType,
         targetAmount: editBucketType === 'goal' ? parseFloat(editBucketTarget) : undefined
       } : b
@@ -94,6 +100,7 @@ export function BudgetOverview({
   };
 
   const handleMonthEndReview = () => {
+    if (!confirm('Close the month? Surplus from monthly budgets will be swept back into the Master Pool.')) return;
     const updated = buckets.map(b => {
       const balance = getBucketBalance(b);
       if (b.type === 'monthly' && balance > 0) {
@@ -131,13 +138,13 @@ export function BudgetOverview({
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg">Buckets</h3>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={handleMonthEndReview}
               className="px-3 py-1.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors font-bold text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <RefreshCw className="w-3 h-3" /> Close Month
             </button>
-            <button 
+            <button
               onClick={() => setIsAddingBucket(!isAddingBucket)}
               className="px-3 py-1.5 bg-emerald-600/20 text-emerald-400 rounded hover:bg-emerald-600/30 transition-colors font-bold text-xs uppercase tracking-wider flex items-center gap-2"
             >
@@ -194,7 +201,7 @@ export function BudgetOverview({
                     </div>
                   )}
                   <div className="flex gap-2 w-full md:w-auto justify-end">
-                    <button onClick={() => setEditingBucketId(null)} className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-800 rounded">
+                    <button onClick={() => setEditingBucketId(null)} className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 bg-zinc-200 dark:bg-zinc-800 rounded">
                       <X className="w-4 h-4" />
                     </button>
                     <button onClick={() => handleSaveEdit(b.id)} className="p-2 text-white bg-emerald-600 hover:bg-emerald-500 rounded">
@@ -233,7 +240,7 @@ export function BudgetOverview({
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-1">Balance</p>
@@ -241,16 +248,16 @@ export function BudgetOverview({
                       {balance.toFixed(2)}
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 border-l border-zinc-200 dark:border-zinc-800 pl-4">
-                    <input 
+                    <input
                       type="number"
                       placeholder="+ Add amount"
                       value={assignAmounts[b.id] || ''}
                       onChange={e => setAssignAmounts(prev => ({ ...prev, [b.id]: e.target.value }))}
                       className="w-24 px-2 py-1.5 bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded text-sm text-right"
                     />
-                    <button 
+                    <button
                       onClick={() => handleAssignMoney(b.id)}
                       className="px-2 py-1.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded hover:bg-zinc-300 dark:hover:bg-zinc-700 font-bold text-xs"
                     >
