@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { WorkoutPlan, WorkoutPlanDay, WorkoutPlanExercise, Workout } from '../../types';
 import { generateId } from '../../utils';
+import { getAIHeaders } from '../../aiHeaders';
 import { Loader2, Plus, Sparkles, CheckCircle2, Circle, Dumbbell, Target, Settings2, RotateCcw } from 'lucide-react';
 
 interface WorkoutPlannerProps {
   workoutPlan: WorkoutPlan | null;
   onUpdateWorkoutPlan: (plan: WorkoutPlan | null) => void;
   onAddWorkout?: (workout: Workout) => void;
+  onRemoveWorkout?: (workoutId: string) => void;
 }
 
 const PRESET_GOALS = ['Weight Loss', 'Muscle Gain', 'Endurance', 'Flexibility', 'General Fitness'];
@@ -14,7 +16,7 @@ const PRESET_EXPERIENCE = ['Beginner', 'Intermediate', 'Advanced'];
 const PRESET_TYPES = ['Home Workout', 'Gym', 'Running', 'Calisthenics', 'Yoga', 'HIIT'];
 const PRESET_EQUIPMENT = ['None (Bodyweight)', 'Dumbbells', 'Pull-up Bar', 'Resistance Bands', 'Kettlebell', 'Yoga Mat', 'Bench'];
 
-export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout }: WorkoutPlannerProps) {
+export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout, onRemoveWorkout }: WorkoutPlannerProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [creationMode, setCreationMode] = useState<'ai' | 'manual'>('ai');
   const [manualInput, setManualInput] = useState('');
@@ -23,9 +25,9 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
   const [experience, setExperience] = useState('');
   const [types, setTypes] = useState<string[]>([]);
   const [equipment, setEquipment] = useState<string[]>([]);
-  
+
   const [customGoal, setCustomGoal] = useState('');
-  
+
   const toggleSelection = (item: string, list: string[], setList: (list: string[]) => void) => {
     if (list.includes(item)) {
       setList(list.filter(i => i !== item));
@@ -40,21 +42,12 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
     try {
       const response = await fetch('/api/parse-workout-plan', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json', 
-          'x-ai-provider': localStorage.getItem('lifehub_ai_provider')?.replace(/"/g, '') || 'gemini',
-          'x-gemini-api-key': localStorage.getItem('lifehub_gemini_api_key')?.replace(/"/g, '') || '',
-          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-1.5-flash',
-          'x-openai-api-key': localStorage.getItem('lifehub_openai_api_key')?.replace(/"/g, '') || '',
-          'x-openai-model': localStorage.getItem('lifehub_openai_model')?.replace(/"/g, '') || 'gpt-4o-mini',
-          'x-anthropic-api-key': localStorage.getItem('lifehub_anthropic_api_key')?.replace(/"/g, '') || '',
-          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-haiku-20240307'
-        },
+        headers: getAIHeaders(),
         body: JSON.stringify({ textInput: manualInput })
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok && data.days) {
         const newPlan: WorkoutPlan = {
           id: generateId(),
@@ -89,26 +82,17 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
   const handleGenerate = async () => {
     const finalGoal = goal === 'Custom' && customGoal ? customGoal : goal;
     if (!finalGoal || !experience || types.length === 0) return;
-    
+
     setIsGenerating(true);
     try {
       const response = await fetch('/api/generate-workout-plan', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json', 
-          'x-ai-provider': localStorage.getItem('lifehub_ai_provider')?.replace(/"/g, '') || 'gemini',
-          'x-gemini-api-key': localStorage.getItem('lifehub_gemini_api_key')?.replace(/"/g, '') || '',
-          'x-gemini-model': localStorage.getItem('lifehub_gemini_model')?.replace(/"/g, '') || 'gemini-1.5-flash',
-          'x-openai-api-key': localStorage.getItem('lifehub_openai_api_key')?.replace(/"/g, '') || '',
-          'x-openai-model': localStorage.getItem('lifehub_openai_model')?.replace(/"/g, '') || 'gpt-4o-mini',
-          'x-anthropic-api-key': localStorage.getItem('lifehub_anthropic_api_key')?.replace(/"/g, '') || '',
-          'x-anthropic-model': localStorage.getItem('lifehub_anthropic_model')?.replace(/"/g, '') || 'claude-3-haiku-20240307'
-        },
+        headers: getAIHeaders(),
         body: JSON.stringify({ goal: finalGoal, experience, types, equipment })
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok && data.days) {
         const newPlan: WorkoutPlan = {
           id: generateId(),
@@ -142,30 +126,41 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
 
   const toggleExercise = (dayId: string, exerciseId: string) => {
     if (!workoutPlan) return;
-    
+
     const updatedPlan = { ...workoutPlan };
     const day = updatedPlan.days.find(d => d.id === dayId);
     if (day) {
       const exercise = day.exercises.find(e => e.id === exerciseId);
       if (exercise) {
-        if (!exercise.completed && onAddWorkout) {
-          // Estimate calories roughly
-          const estimatedCalories = 50; 
-          onAddWorkout({
-            id: generateId(),
-            exercise: exercise.name,
-            reps: parseInt(exercise.reps) || undefined,
-            caloriesBurned: estimatedCalories,
-            date: new Date().toISOString()
-          });
+        if (!exercise.completed) {
+          // Checking a box logs a real workout entry and remembers its id
+          // so unchecking later can cleanly remove that same entry.
+          const newWorkoutId = generateId();
+          const estimatedCalories = 50;
+          if (onAddWorkout) {
+            onAddWorkout({
+              id: newWorkoutId,
+              exercise: exercise.name,
+              reps: parseInt(exercise.reps) || undefined,
+              caloriesBurned: estimatedCalories,
+              date: new Date().toISOString()
+            });
+          }
+          exercise.loggedWorkoutId = newWorkoutId;
+        } else {
+          // Unchecking removes the workout entry that was created when it was checked.
+          if (exercise.loggedWorkoutId && onRemoveWorkout) {
+            onRemoveWorkout(exercise.loggedWorkoutId);
+          }
+          exercise.loggedWorkoutId = undefined;
         }
         exercise.completed = !exercise.completed;
       }
     }
-    
+
     onUpdateWorkoutPlan(updatedPlan);
   };
-  
+
   const handleResetPlan = () => {
     if (confirm('Are you sure you want to discard your current plan?')) {
       onUpdateWorkoutPlan(null);
@@ -188,7 +183,7 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
               ))}
             </div>
           </div>
-          <button 
+          <button
             onClick={handleResetPlan}
             className="flex items-center gap-2 px-4 py-2 bg-red-900/20 text-red-400 rounded-lg hover:bg-red-900/30 transition-colors border border-red-900/50 text-sm whitespace-nowrap"
           >
@@ -199,8 +194,8 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {workoutPlan.days.map((day) => {
-            const progress = day.exercises.length > 0 
-              ? (day.exercises.filter(e => e.completed).length / day.exercises.length) * 100 
+            const progress = day.exercises.length > 0
+              ? (day.exercises.filter(e => e.completed).length / day.exercises.length) * 100
               : 0;
             const isCompleted = progress === 100 && day.exercises.length > 0;
             const isEmpty = day.exercises.length === 0;
@@ -217,16 +212,16 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
                       <span className="text-xs text-zinc-500 dark:text-zinc-500">{day.exercises.filter(e => e.completed).length}/{day.exercises.length} Done</span>
                     )}
                   </div>
-                  
+
                   {isEmpty ? (
                     <p className="text-sm text-zinc-500 dark:text-zinc-500 italic py-4">Rest day or active recovery.</p>
                   ) : (
                     <div className="space-y-3">
                       {day.exercises.map(exercise => (
-                        <div 
-                          key={exercise.id} 
+                        <div
+                          key={exercise.id}
                           onClick={() => toggleExercise(day.id, exercise.id)}
-                          className={`flex items-start gap-3 p-3 rounded-xl border ${exercise.completed ? 'bg-emerald-900/10 border-emerald-900/30' : 'bg-[#1a1a1a] border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:border-zinc-700'} cursor-pointer transition-colors`}
+                          className={`flex items-start gap-3 p-3 rounded-xl border ${exercise.completed ? 'bg-emerald-900/10 border-emerald-900/30' : 'bg-[#1a1a1a] border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'} cursor-pointer transition-colors`}
                         >
                           <button className="mt-0.5">
                             {exercise.completed ? (
@@ -262,12 +257,12 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
           </h2>
           <p className="text-zinc-500 dark:text-zinc-500 text-sm mt-2">Generate a program or paste your existing routine.</p>
         </div>
-        
+
         <div className="flex bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg p-1 w-fit">
           <button
             onClick={() => setCreationMode('ai')}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              creationMode === 'ai' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-500 hover:text-zinc-700 dark:text-zinc-300'
+              creationMode === 'ai' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
             }`}
           >
             AI Generate
@@ -275,7 +270,7 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
           <button
             onClick={() => setCreationMode('manual')}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              creationMode === 'manual' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-500 hover:text-zinc-700 dark:text-zinc-300'
+              creationMode === 'manual' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
             }`}
           >
             Paste Plan
@@ -297,7 +292,7 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
           <button
             onClick={handleParseManual}
             disabled={!manualInput || isGenerating}
-            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-200 dark:bg-zinc-800 disabled:text-zinc-500 dark:text-zinc-500 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-200 dark:disabled:bg-zinc-800 disabled:text-zinc-500 dark:disabled:text-zinc-500 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isGenerating ? (
               <><Loader2 className="w-5 h-5 animate-spin" /> Parsing...</>
@@ -310,103 +305,103 @@ export function WorkoutPlanner({ workoutPlan, onUpdateWorkoutPlan, onAddWorkout 
         <div className="space-y-8">
           <div>
             <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <Target className="w-4 h-4" /> Goal
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {PRESET_GOALS.map(g => (
+              <Target className="w-4 h-4" /> Goal
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {PRESET_GOALS.map(g => (
+                <button
+                  key={g}
+                  onClick={() => setGoal(g)}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${goal === g ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+                >
+                  {g}
+                </button>
+              ))}
               <button
-                key={g}
-                onClick={() => setGoal(g)}
-                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${goal === g ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+                onClick={() => setGoal('Custom')}
+                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${goal === 'Custom' ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
               >
-                {g}
+                Custom
               </button>
-            ))}
-            <button
-              onClick={() => setGoal('Custom')}
-              className={`px-4 py-2 rounded-lg text-sm border transition-colors ${goal === 'Custom' ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
-            >
-              Custom
-            </button>
+            </div>
+            {goal === 'Custom' && (
+              <input
+                type="text"
+                placeholder="E.g., Increase vertical jump, Rehub knee injury"
+                value={customGoal}
+                onChange={e => setCustomGoal(e.target.value)}
+                className="mt-3 w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg text-sm"
+              />
+            )}
           </div>
-          {goal === 'Custom' && (
-            <input 
-              type="text" 
-              placeholder="E.g., Increase vertical jump, Rehub knee injury" 
-              value={customGoal}
-              onChange={e => setCustomGoal(e.target.value)}
-              className="mt-3 w-full px-3 py-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg text-sm"
-            />
-          )}
-        </div>
 
-        <div>
-          <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <Settings2 className="w-4 h-4" /> Experience Level
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {PRESET_EXPERIENCE.map(e => (
-              <button
-                key={e}
-                onClick={() => setExperience(e)}
-                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${experience === e ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
-              >
-                {e}
-              </button>
-            ))}
+          <div>
+            <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <Settings2 className="w-4 h-4" /> Experience Level
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {PRESET_EXPERIENCE.map(e => (
+                <button
+                  key={e}
+                  onClick={() => setExperience(e)}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${experience === e ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <Dumbbell className="w-4 h-4" /> Workout Types (Select multiple)
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {PRESET_TYPES.map(t => (
-              <button
-                key={t}
-                onClick={() => toggleSelection(t, types, setTypes)}
-                className={`px-4 py-2 rounded-lg text-sm border transition-colors ${types.includes(t) ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
-              >
-                {t}
-              </button>
-            ))}
+          <div>
+            <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <Dumbbell className="w-4 h-4" /> Workout Types (Select multiple)
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {PRESET_TYPES.map(t => (
+                <button
+                  key={t}
+                  onClick={() => toggleSelection(t, types, setTypes)}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${types.includes(t) ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-[#1a1a1a] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-3">Available Equipment</label>
-          <div className="flex flex-wrap gap-2">
-            {PRESET_EQUIPMENT.map(e => (
-              <button
-                key={e}
-                onClick={() => toggleSelection(e, equipment, setEquipment)}
-                className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${equipment.includes(e) ? 'bg-zinc-700 text-white border-zinc-600' : 'bg-white dark:bg-zinc-950 text-zinc-500 dark:text-zinc-500 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
-              >
-                {e}
-              </button>
-            ))}
+          <div>
+            <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-3">Available Equipment</label>
+            <div className="flex flex-wrap gap-2">
+              {PRESET_EQUIPMENT.map(e => (
+                <button
+                  key={e}
+                  onClick={() => toggleSelection(e, equipment, setEquipment)}
+                  className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${equipment.includes(e) ? 'bg-zinc-700 text-white border-zinc-600' : 'bg-white dark:bg-zinc-950 text-zinc-500 dark:text-zinc-500 border-zinc-200 dark:border-zinc-800 hover:border-zinc-600'}`}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <button
-          onClick={handleGenerate}
-          disabled={!goal || !experience || types.length === 0 || isGenerating}
-          className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-200 dark:bg-zinc-800 disabled:text-zinc-500 dark:text-zinc-500 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 mt-4"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Architecting Plan...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-5 h-5" />
-              Generate Workout Program
-            </>
-          )}
-        </button>
-      </div>
+          <button
+            onClick={handleGenerate}
+            disabled={!goal || !experience || types.length === 0 || isGenerating}
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-200 dark:disabled:bg-zinc-800 disabled:text-zinc-500 dark:disabled:text-zinc-500 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 mt-4"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Architecting Plan...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5" />
+                Generate Workout Program
+              </>
+            )}
+          </button>
+        </div>
       )}
     </div>
   );

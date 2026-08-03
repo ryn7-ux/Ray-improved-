@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserProfile, WeightLog } from '../../types';
 import { generateId } from '../../utils';
-import { Plus, Target, Ruler, Save } from 'lucide-react';
+import { Plus, Target, Ruler, Save, Pencil, Trash2, Check, X } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, CartesianGrid } from 'recharts';
 import { format } from 'date-fns';
 
@@ -19,11 +19,16 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
   const [age, setAge] = useState(userProfile.age?.toString() || '');
   const [gender, setGender] = useState<'male' | 'female' | null>(userProfile.gender || null);
 
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editWeight, setEditWeight] = useState('');
+
   const sortedLogs = [...weightLogs].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const chartData = sortedLogs.map(log => ({
     date: format(new Date(log.date), 'MMM d'),
     weight: log.weight
   }));
+  // Most recent first, for the editable list below the chart.
+  const recentLogs = [...weightLogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const handleLogWeight = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +42,25 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
 
     onUpdateWeightLogs([...weightLogs, newLog]);
     setWeight('');
+  };
+
+  const startEdit = (log: WeightLog) => {
+    setEditingId(log.id);
+    setEditWeight(log.weight.toString());
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  const saveEdit = (id: string) => {
+    const parsed = parseFloat(editWeight);
+    if (isNaN(parsed) || parsed <= 0) return;
+    onUpdateWeightLogs(weightLogs.map(l => l.id === id ? { ...l, weight: parsed } : l));
+    setEditingId(null);
+  };
+
+  const deleteLog = (id: string) => {
+    if (!confirm('Delete this weight entry? This cannot be undone.')) return;
+    onUpdateWeightLogs(weightLogs.filter(l => l.id !== id));
   };
 
   const handleUpdateProfile = () => {
@@ -176,32 +200,76 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
           </div>
         </div>
 
-        <div className="lg:col-span-2 surface-panel p-6 flex flex-col h-full min-h-[300px]">
-          <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg mb-6 flex items-center gap-2">
-            <Target className="w-5 h-5 text-amber-400" /> Progress Curve
-          </h3>
-          <div className="flex-1 w-full min-h-[250px]">
-            {chartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#818cf8" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#818cf8" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="date" stroke="#52525b" fontSize={12} tickLine={false} axisLine={false} />
-                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#1a1a1a', borderColor: '#27272a', borderRadius: '8px' }}
-                    itemStyle={{ color: '#818cf8' }}
-                  />
-                  <Area type="monotone" dataKey="weight" stroke="#818cf8" strokeWidth={3} fillOpacity={1} fill="url(#colorWeight)" />
-                </AreaChart>
-              </ResponsiveContainer>
+        <div className="lg:col-span-2 space-y-6">
+          <div className="surface-panel p-6 flex flex-col min-h-[300px]">
+            <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg mb-6 flex items-center gap-2">
+              <Target className="w-5 h-5 text-amber-400" /> Progress Curve
+            </h3>
+            <div className="flex-1 w-full min-h-[250px]">
+              {chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData}>
+                    <defs>
+                      <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="date" stroke="#52525b" fontSize={12} tickLine={false} axisLine={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#1a1a1a', borderColor: '#27272a', borderRadius: '8px' }}
+                      itemStyle={{ color: '#10b981' }}
+                    />
+                    <Area type="monotone" dataKey="weight" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorWeight)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-full text-zinc-500 dark:text-zinc-500 italic">
+                  Log your weight to see progress over time.
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="surface-panel p-6">
+            <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg mb-4">Weight Log History</h3>
+            {recentLogs.length === 0 ? (
+              <p className="text-zinc-500 dark:text-zinc-500 text-sm text-center py-8 italic">No weight entries yet.</p>
             ) : (
-              <div className="flex items-center justify-center h-full text-zinc-500 dark:text-zinc-500 italic">
-                Log your weight to see progress over time.
+              <div className="space-y-2">
+                {recentLogs.map(log => {
+                  const isEditing = editingId === log.id;
+                  return (
+                    <div key={log.id} className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded-lg border border-zinc-200 dark:border-zinc-800 group transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
+                      <p className="text-xs text-zinc-500 dark:text-zinc-500">{format(new Date(log.date), 'MMM d, yyyy')}</p>
+                      {isEditing ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            step="0.1"
+                            autoFocus
+                            value={editWeight}
+                            onChange={e => setEditWeight(e.target.value)}
+                            className="w-24 px-2 py-1 bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded text-sm text-right"
+                          />
+                          <button onClick={() => saveEdit(log.id)} className="p-1.5 text-white bg-emerald-600 hover:bg-emerald-500 rounded"><Check className="w-3.5 h-3.5" /></button>
+                          <button onClick={cancelEdit} className="p-1.5 text-zinc-600 dark:text-zinc-400 bg-zinc-200 dark:bg-zinc-800 rounded"><X className="w-3.5 h-3.5" /></button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono text-zinc-900 dark:text-zinc-100 font-bold">{log.weight.toFixed(1)} <span className="text-[10px] text-zinc-500 dark:text-zinc-500 uppercase">kg</span></span>
+                          <button onClick={() => startEdit(log)} className="text-zinc-600 hover:text-emerald-400 opacity-0 group-hover:opacity-100 transition-all p-1">
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={() => deleteLog(log.id)} className="text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all p-1">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
