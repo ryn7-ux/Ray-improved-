@@ -6,39 +6,73 @@ import Anthropic from "@anthropic-ai/sdk";
 const app = express();
 app.use(express.json());
 
+// --- Lightweight in-memory per-IP rate limiting -----------------------------------
+// Every /api/ route can trigger a real AI call (and Gemini falls back to a shared
+// server-side key when the caller doesn't supply one), so without any limiting a
+// single visitor could rack up unlimited usage against that shared key. This keeps
+// it simple: no new dependency, just a rolling window counter kept in memory.
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute window
+const RATE_LIMIT_MAX_REQUESTS = 20; // max requests per IP per window
+const requestLog = new Map<string, number[]>();
+
+function rateLimiter(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+
+  const timestamps = (requestLog.get(ip) || []).filter(t => t > windowStart);
+  timestamps.push(now);
+  requestLog.set(ip, timestamps);
+
+  // Periodically prune stale IPs so this map doesn't grow forever.
+  if (requestLog.size > 5000) {
+    for (const [key, times] of requestLog) {
+      if (times.every(t => t <= windowStart)) requestLog.delete(key);
+    }
+  }
+
+  if (timestamps.length > RATE_LIMIT_MAX_REQUESTS) {
+    return res.status(429).json({ error: 'Too many requests. Please wait a moment and try again.' });
+  }
+  next();
+}
+
+app.use('/api/', rateLimiter);
+// --------------------------------------------------------------------------------
+
 async function generateAIContent(req: express.Request, prompt: string, isJson: boolean = false): Promise<string> {
   const provider = req.header('x-ai-provider') || 'gemini';
-  
+
   if (provider === 'openai') {
     const key = req.header('x-openai-api-key')?.trim();
     if (!key) throw new Error("API key not valid. Please pass a valid API key.");
     const openai = new OpenAI({ apiKey: key });
-    
+
     const response = await openai.chat.completions.create({
       model: req.header('x-openai-model') || 'gpt-4o-mini',
       messages: [{ role: "user", content: prompt }],
       response_format: isJson ? { type: "json_object" } : { type: "text" }
     });
     return response.choices[0].message.content || '';
-    
+
   } else if (provider === 'anthropic') {
     const key = req.header('x-anthropic-api-key')?.trim();
     if (!key) throw new Error("API key not valid. Please pass a valid API key.");
     const anthropic = new Anthropic({ apiKey: key });
-    
+
     const response = await anthropic.messages.create({
       model: req.header('x-anthropic-model') || 'claude-3-5-haiku-20241022',
       max_tokens: 1500,
       messages: [{ role: "user", content: prompt }]
     });
     return (response.content[0] as any).text || '';
-    
+
   } else {
     // Gemini
     const key = req.header('x-gemini-api-key')?.trim() || process.env.GEMINI_API_KEY;
     if (!key) throw new Error("API key not valid. Please pass a valid API key.");
     const ai = new GoogleGenAI({ apiKey: key });
-    
+
     const response = await ai.models.generateContent({
       model: req.header('x-gemini-model') || 'gemini-2.5-flash',
       contents: prompt,
@@ -90,11 +124,11 @@ function extractJSON(text: string) {
 app.post("/api/estimate-calories", async (req, res) => {
   try {
     const { exercise, reps, durationMins } = req.body;
-    const prompt = `Estimate the calories burned for this exercise. Be realistic. Only respond with a JSON object in this format: {"caloriesBurned": number}. 
-    Exercise: ${exercise}
-    Reps: ${reps || 'N/A'}
-    Duration (mins): ${durationMins || 'N/A'}`;
-    
+    const prompt = `Estimate the calories burned for this exercise. Be realistic. Only respond with a JSON object in this format: {"caloriesBurned": number}.
+Exercise: ${exercise}
+Reps: ${reps || 'N/A'}
+Duration (mins): ${durationMins || 'N/A'}`;
+
     const text = await generateAIContent(req, prompt, true);
     if (text) {
       res.json(extractJSON(text));
@@ -119,7 +153,7 @@ app.post("/api/diet-check", async (req, res) => {
   try {
     const { calories, protein, fat, carbs, burned } = req.body;
     const prompt = `I have consumed ${calories} calories today (${protein}g protein, ${fat}g fat, ${carbs}g carbs). I have burned ${burned} calories through exercise. Provide a very brief (1-2 sentences) assessment of my diet today, and if I should eat more or less. Be encouraging.`;
-    
+
     const text = await generateAIContent(req, prompt, false);
     res.json({ feedback: text });
   } catch (error) {
@@ -139,14 +173,14 @@ app.post("/api/diet-check", async (req, res) => {
 app.post("/api/estimate-macros", async (req, res) => {
   try {
     const { mealDescription } = req.body;
-    const prompt = `Analyze the following meal/ingredients and estimate the total nutritional values. 
-    Meal/Ingredients: ${mealDescription}
-    
-    Respond ONLY with a JSON object in exactly this format: 
-    {"name": "string", "calories": 0, "protein": 0, "fat": 0, "carbs": 0}
-    
-    Make the "name" a short summary of the meal. Provide realistic numerical estimates.`;
-    
+    const prompt = `Analyze the following meal/ingredients and estimate the total nutritional values.
+Meal/Ingredients: ${mealDescription}
+
+Respond ONLY with a JSON object in exactly this format:
+{"name": "string", "calories": 0, "protein": 0, "fat": 0, "carbs": 0}
+
+Make the "name" a short summary of the meal. Provide realistic numerical estimates.`;
+
     const text = await generateAIContent(req, prompt, true);
     if (text) {
       res.json(extractJSON(text));
@@ -171,29 +205,29 @@ app.post("/api/generate-workout-plan", async (req, res) => {
   try {
     const { goal, experience, types, equipment } = req.body;
     const prompt = `Design a detailed weekly workout plan based on the following user profile:
-    Goal: ${goal}
-    Experience Level: ${experience}
-    Preferred Workout Types: ${types.join(', ')}
-    Available Equipment: ${equipment.length > 0 ? equipment.join(', ') : 'None / Bodyweight only'}
+Goal: ${goal}
+Experience Level: ${experience}
+Preferred Workout Types: ${types.join(', ')}
+Available Equipment: ${equipment.length > 0 ? equipment.join(', ') : 'None / Bodyweight only'}
 
-    Create a structured 7-day schedule. For each active day, provide a list of exercises with recommended sets and reps. Include rest days as needed. Tailor the difficulty to their experience level, and only include exercises that can be performed with their available equipment or bodyweight.
+Create a structured 7-day schedule. For each active day, provide a list of exercises with recommended sets and reps. Include rest days as needed. Tailor the difficulty to their experience level, and only include exercises that can be performed with their available equipment or bodyweight.
 
-    Respond ONLY with a JSON object following this EXACT schema:
+Respond ONLY with a JSON object following this EXACT schema:
+{
+  "days": [
     {
-      "days": [
+      "dayName": "string (e.g., 'Monday - Push', 'Tuesday - Rest')",
+      "exercises": [
         {
-          "dayName": "string (e.g., 'Monday - Push', 'Tuesday - Rest')",
-          "exercises": [
-            {
-              "name": "string",
-              "sets": "string or number",
-              "reps": "string or number"
-            }
-          ]
+          "name": "string",
+          "sets": "string or number",
+          "reps": "string or number"
         }
       ]
-    }`;
-    
+    }
+  ]
+}`;
+
     const text = await generateAIContent(req, prompt, true);
     if (text) {
       res.json(extractJSON(text));
@@ -217,32 +251,32 @@ app.post("/api/generate-workout-plan", async (req, res) => {
 app.post("/api/parse-workout-plan", async (req, res) => {
   try {
     const { textInput } = req.body;
-    const prompt = `Parse the following user-provided workout plan into a structured 7-day schedule. 
-    For each day, extract the exercises, sets, and reps. If a day is empty or a rest day, leave the exercises array empty.
-    
-    User Input:
-    ${textInput}
+    const prompt = `Parse the following user-provided workout plan into a structured 7-day schedule.
+For each day, extract the exercises, sets, and reps. If a day is empty or a rest day, leave the exercises array empty.
 
-    Respond ONLY with a JSON object following this EXACT schema:
+User Input:
+${textInput}
+
+Respond ONLY with a JSON object following this EXACT schema:
+{
+  "goal": "string (extract or infer goal)",
+  "experience": "string (extract or infer experience, default to 'Beginner')",
+  "types": ["string (extract or infer workout types)"],
+  "equipment": ["string (extract or infer equipment mentioned)"],
+  "days": [
     {
-      "goal": "string (extract or infer goal)",
-      "experience": "string (extract or infer experience, default to 'Beginner')",
-      "types": ["string (extract or infer workout types)"],
-      "equipment": ["string (extract or infer equipment mentioned)"],
-      "days": [
+      "dayName": "string",
+      "exercises": [
         {
-          "dayName": "string",
-          "exercises": [
-            {
-              "name": "string",
-              "sets": "string or number",
-              "reps": "string or number"
-            }
-          ]
+          "name": "string",
+          "sets": "string or number",
+          "reps": "string or number"
         }
       ]
-    }`;
-    
+    }
+  ]
+}`;
+
     const text = await generateAIContent(req, prompt, true);
     if (text) {
       res.json(extractJSON(text));
@@ -269,7 +303,7 @@ app.post("/api/verify-key", async (req, res) => {
     if (!key) {
       return res.status(400).json({ valid: false });
     }
-    
+
     if (provider === 'openai') {
       const openai = new OpenAI({ apiKey: key });
       await openai.models.list(); // Simple check
