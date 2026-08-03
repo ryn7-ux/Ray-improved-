@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FoodLog, Workout, WaterLog, UserProfile, FavoriteMeal } from '../types';
 import { generateId } from '../utils';
+import { getAIHeaders } from '../aiHeaders';
 import { Plus, Trash2, Loader2, Sparkles, Droplets, Star, X, Undo2 } from 'lucide-react';
 import { isSameDay, isToday } from 'date-fns';
 import { DateSelector } from '../components/DateSelector';
@@ -16,24 +17,6 @@ interface DietViewProps {
   onUpdateWaterLogs: (logs: WaterLog[]) => void;
   favoriteMeals: FavoriteMeal[];
   onUpdateFavoriteMeals: (meals: FavoriteMeal[]) => void;
-}
-
-// Reads the user's configured AI provider/keys/models from localStorage.
-// Pulled into one place so every AI call builds its headers the same way.
-function getAIHeaders(): Record<string, string> {
-  const get = (key: string, fallback = '') =>
-    localStorage.getItem(key)?.replace(/"/g, '') || fallback;
-
-  return {
-    'Content-Type': 'application/json',
-    'x-ai-provider': get('lifehub_ai_provider', 'gemini'),
-    'x-gemini-api-key': get('lifehub_gemini_api_key'),
-    'x-gemini-model': get('lifehub_gemini_model', 'gemini-2.5-flash'),
-    'x-openai-api-key': get('lifehub_openai_api_key'),
-    'x-openai-model': get('lifehub_openai_model', 'gpt-4o-mini'),
-    'x-anthropic-api-key': get('lifehub_anthropic_api_key'),
-    'x-anthropic-model': get('lifehub_anthropic_model', 'claude-3-5-haiku-20241022'),
-  };
 }
 
 type EstimatedMeal = { name: string; calories: number; protein: number; fat: number; carbs: number };
@@ -118,10 +101,12 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
   };
 
   const handleDeleteWater = (id: string) => {
+    if (!confirm('Delete this water entry?')) return;
     onUpdateWaterLogs(waterLogs.filter(w => w.id !== id));
   };
 
   const handleDelete = (id: string) => {
+    if (!confirm('Delete this food entry? This cannot be undone.')) return;
     onUpdate(foods.filter(f => f.id !== id));
     setLastAdded(prev => (prev && prev.id === id ? null : prev));
   };
@@ -343,7 +328,7 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
                     </button>
                     <button
                       type="button"
-                      onClick={() => { handleDelete(lastAdded.id); }}
+                      onClick={() => { onUpdate(foods.filter(f => f.id !== lastAdded.id)); setLastAdded(null); }}
                       className="p-1.5 rounded hover:bg-red-500/20 text-red-400"
                       title="Undo"
                     >
@@ -504,7 +489,7 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
             ) : (
               <div className="space-y-3">
                 {todayFoods.map(food => (
-                  <div key={food.id} className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded-lg border border-zinc-200 dark:border-zinc-800 group transition-colors hover:border-zinc-300 dark:border-zinc-700">
+                  <div key={food.id} className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded-lg border border-zinc-200 dark:border-zinc-800 group transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
                     <div>
                       <p className="font-medium text-zinc-800 dark:text-zinc-200 text-sm">{food.name}</p>
                       <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider mt-1">
@@ -541,7 +526,7 @@ export function DietView({ foods, workouts, waterLogs, userProfile, selectedDate
               <h3 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg mb-6">Water Intake</h3>
               <div className="space-y-3">
                 {todayWaterLogs.map(log => (
-                  <div key={log.id} className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded-lg border border-zinc-200 dark:border-zinc-800 group transition-colors hover:border-zinc-300 dark:border-zinc-700">
+                  <div key={log.id} className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded-lg border border-zinc-200 dark:border-zinc-800 group transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
                     <div className="flex items-center gap-3">
                       <Droplets className="w-4 h-4 text-blue-400" />
                       <p className="font-medium text-zinc-800 dark:text-zinc-200 text-sm">Water</p>

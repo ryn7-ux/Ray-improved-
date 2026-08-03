@@ -31,13 +31,13 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
   const caloriesBurnedToday = todayWorkouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
   const totalWater = todayWaterLogs.reduce((sum, w) => sum + w.amount, 0);
   const waterGoal = userProfile.dailyWaterGoal || 2000;
-  
+
   // Basic BMR calculation (Mifflin-St Jeor equation approx)
   const currentWeight = weightLogs.length > 0 ? weightLogs[weightLogs.length - 1].weight : 70; // Default 70kg if no log
   const height = userProfile.height || 170; // Default 170cm
   const age = userProfile.age || 30; // Default 30
   const isMale = userProfile.gender !== 'female';
-  
+
   const bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) + (isMale ? 5 : -161);
   const totalEnergyExpenditure = bmr + caloriesBurnedToday;
   const netCalories = totalCaloriesToday - totalEnergyExpenditure;
@@ -45,7 +45,7 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
 
   // Calculate Health Score (0-100)
   let healthScore = 50; // Base score
-  
+
   // Factor 1: Net Calories vs Goal
   if (userProfile.targetWeight) {
     const isWeightLossGoal = userProfile.targetWeight < currentWeight;
@@ -84,7 +84,7 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
           </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider">Summary for {format(selectedDate, 'EEEE, MMMM do')}</p>
         </div>
-        
+
         <div className="surface-panel p-4 flex items-center gap-4">
           <div className="w-11 h-11 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 flex items-center justify-center">
             <Heart className="w-5 h-5 text-rose-400" />
@@ -99,17 +99,17 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
         </div>
       </div>
 
-      <AnalyticsAlerts 
-        foods={foods} 
-        sleepLogs={sleepLogs} 
-        userProfile={userProfile} 
-        weightLogs={weightLogs} 
-        selectedDate={selectedDate} 
+      <AnalyticsAlerts
+        foods={foods}
+        sleepLogs={sleepLogs}
+        userProfile={userProfile}
+        weightLogs={weightLogs}
+        selectedDate={selectedDate}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Budget Card */}
-        <div 
+        <div
           onClick={() => onChangeView('budget')}
           className="surface-panel p-5 cursor-pointer flex flex-col"
         >
@@ -121,7 +121,7 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
         </div>
 
         {/* Diet Card */}
-        <div 
+        <div
           onClick={() => onChangeView('diet')}
           className="surface-panel p-5 cursor-pointer flex flex-col"
         >
@@ -133,7 +133,7 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
         </div>
 
         {/* Fitness Card */}
-        <div 
+        <div
           onClick={() => onChangeView('fitness')}
           className="surface-panel p-5 cursor-pointer flex flex-col"
         >
@@ -145,7 +145,7 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
         </div>
 
         {/* Net Energy Card */}
-        <div 
+        <div
           onClick={() => onChangeView('fitness')}
           className="surface-panel p-5 cursor-pointer flex flex-col"
         >
@@ -160,7 +160,7 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
         </div>
 
         {/* Sleep Card */}
-        <div 
+        <div
           onClick={() => onChangeView('fitness')}
           className="surface-panel p-5 cursor-pointer flex flex-col"
         >
@@ -182,7 +182,7 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
         </div>
 
         {/* Hydration Card */}
-        <div 
+        <div
           onClick={() => onChangeView('diet')}
           className="surface-panel p-5 cursor-pointer flex flex-col"
         >
@@ -194,8 +194,8 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
             {totalWater} <span className="text-xs text-zinc-500 dark:text-zinc-500 font-sans">ml</span>
           </p>
           <div className="w-full bg-zinc-100 dark:bg-zinc-900 rounded-full h-1 mt-2 overflow-hidden">
-            <div 
-              className="bg-emerald-500 h-1 rounded-full" 
+            <div
+              className="bg-emerald-500 h-1 rounded-full"
               style={{ width: `${Math.min((totalWater / waterGoal) * 100, 100)}%` }}
             ></div>
           </div>
@@ -203,14 +203,14 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
       </div>
 
       {/* Latest Note */}
-      <div 
+      <div
         onClick={() => onChangeView('notes')}
         className="surface-panel p-6 cursor-pointer group"
       >
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg mb-1">Ideation Studio</h2>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-500 uppercase tracking-wider">Latest note</p>
+            <h2 className="font-display text-zinc-900 dark:text-zinc-100 font-semibold text-lg mb-1">The Nexus</h2>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-500 uppercase tracking-wider">Latest idea</p>
           </div>
           <BookOpen className="w-5 h-5 text-zinc-600 group-hover:text-emerald-400 transition-colors" />
         </div>
@@ -221,7 +221,7 @@ export function DashboardView({ transactions, foods, workouts, notes, weightLogs
               <p className="text-zinc-700 dark:text-zinc-300 text-sm leading-relaxed">{latestNote.content}</p>
             </>
           ) : (
-            <p className="text-zinc-500 dark:text-zinc-500 italic">No ephemeral thoughts yet. Start writing...</p>
+            <p className="text-zinc-500 dark:text-zinc-500 italic">No ideas suspended in thought-space yet. Start writing...</p>
           )}
         </div>
       </div>
