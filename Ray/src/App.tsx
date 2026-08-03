@@ -15,12 +15,12 @@ import { useEffect } from 'react';
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  
+
   const [transactions, setTransactions] = useLocalStorage<Transaction[]>('lifehub_transactions', []);
   const [buckets, setBuckets] = useLocalStorage<Bucket[]>('lifehub_buckets', []);
   const [loans, setLoans] = useLocalStorage<Loan[]>('lifehub_loans', []);
   const [repayments, setRepayments] = useLocalStorage<Repayment[]>('lifehub_repayments', []);
-  
+
   const [foods, setFoods] = useLocalStorage<FoodLog[]>('lifehub_foods', []);
   const [favoriteMeals, setFavoriteMeals] = useLocalStorage<FavoriteMeal[]>('lifehub_favorite_meals', []);
   const [workouts, setWorkouts] = useLocalStorage<Workout[]>('lifehub_workouts', []);
@@ -30,7 +30,7 @@ export default function App() {
   const [sleepLogs, setSleepLogs] = useLocalStorage<SleepLog[]>('lifehub_sleeps', []);
   const [waterLogs, setWaterLogs] = useLocalStorage<WaterLog[]>('lifehub_waters', []);
   const [userProfile, setUserProfile] = useLocalStorage<UserProfile>('lifehub_profile', { height: null, targetWeight: null, age: null, gender: null, activityLevel: null, dailyWaterGoal: 2000 });
-  
+
   const [theme, setTheme] = useLocalStorage<'dark' | 'light'>('lifehub_theme', 'dark');
   const [hasSeenWelcome, setHasSeenWelcome] = useLocalStorage<boolean>('lifehub_welcome_seen_v4', false);
   const [showWelcome, setShowWelcome] = useState(!hasSeenWelcome);
@@ -56,80 +56,81 @@ export default function App() {
     }} />;
   }
 
-
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
-        return <DashboardView 
-                  transactions={transactions} 
-                  foods={foods} 
-                  workouts={workouts} 
-                  notes={notes} 
-                  weightLogs={weightLogs}
-                  userProfile={userProfile}
-                  sleepLogs={sleepLogs}
-                  waterLogs={waterLogs}
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                  onChangeView={setCurrentView} 
-               />;
+        return <DashboardView
+          transactions={transactions}
+          foods={foods}
+          workouts={workouts}
+          notes={notes}
+          weightLogs={weightLogs}
+          userProfile={userProfile}
+          sleepLogs={sleepLogs}
+          waterLogs={waterLogs}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          onChangeView={setCurrentView}
+        />;
       case 'budget':
-        return <BudgetView 
-                  transactions={transactions} 
-                  onUpdateTransactions={setTransactions} 
-                  buckets={buckets}
-                  onUpdateBuckets={setBuckets}
-                  loans={loans}
-                  onUpdateLoans={setLoans}
-                  repayments={repayments}
-                  onUpdateRepayments={setRepayments}
-               />;
+        return <BudgetView
+          transactions={transactions}
+          onUpdateTransactions={setTransactions}
+          buckets={buckets}
+          onUpdateBuckets={setBuckets}
+          loans={loans}
+          onUpdateLoans={setLoans}
+          repayments={repayments}
+          onUpdateRepayments={setRepayments}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+        />;
       case 'diet':
-        return <DietView 
-                  foods={foods} 
-                  workouts={workouts} 
-                  onUpdate={setFoods} 
-                  waterLogs={waterLogs}
-                  onUpdateWaterLogs={setWaterLogs}
-                  userProfile={userProfile}
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                  favoriteMeals={favoriteMeals}
-                  onUpdateFavoriteMeals={setFavoriteMeals}
-               />;
+        return <DietView
+          foods={foods}
+          workouts={workouts}
+          onUpdate={setFoods}
+          waterLogs={waterLogs}
+          onUpdateWaterLogs={setWaterLogs}
+          userProfile={userProfile}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          favoriteMeals={favoriteMeals}
+          onUpdateFavoriteMeals={setFavoriteMeals}
+        />;
       case 'fitness':
-        return <FitnessView 
-                  workouts={workouts} 
-                  onUpdate={setWorkouts}
-                  workoutPlan={workoutPlan}
-                  onUpdateWorkoutPlan={setWorkoutPlan}
-                  weightLogs={weightLogs}
-                  onUpdateWeightLogs={setWeightLogs}
-                  userProfile={userProfile}
-                  onUpdateUserProfile={setUserProfile}
-                  sleepLogs={sleepLogs}
-                  onUpdateSleepLogs={setSleepLogs}
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-               />;
+        return <FitnessView
+          workouts={workouts}
+          onUpdate={setWorkouts}
+          workoutPlan={workoutPlan}
+          onUpdateWorkoutPlan={setWorkoutPlan}
+          weightLogs={weightLogs}
+          onUpdateWeightLogs={setWeightLogs}
+          userProfile={userProfile}
+          onUpdateUserProfile={setUserProfile}
+          sleepLogs={sleepLogs}
+          onUpdateSleepLogs={setSleepLogs}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+        />;
       case 'notes':
         return <NotesView notes={notes} onUpdate={setNotes} />;
       case 'settings':
         return <SettingsView onReplayWelcome={replayWelcome} />;
       default:
-        return <DashboardView 
-                  transactions={transactions} 
-                  foods={foods} 
-                  workouts={workouts} 
-                  notes={notes} 
-                  weightLogs={weightLogs}
-                  userProfile={userProfile}
-                  sleepLogs={sleepLogs}
-                  waterLogs={waterLogs}
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                  onChangeView={setCurrentView} 
-               />;
+        return <DashboardView
+          transactions={transactions}
+          foods={foods}
+          workouts={workouts}
+          notes={notes}
+          weightLogs={weightLogs}
+          userProfile={userProfile}
+          sleepLogs={sleepLogs}
+          waterLogs={waterLogs}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          onChangeView={setCurrentView}
+        />;
     }
   };
 
@@ -142,4 +143,3 @@ export default function App() {
     </div>
   );
 }
-

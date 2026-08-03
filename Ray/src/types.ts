@@ -71,6 +71,7 @@ export type WorkoutPlanExercise = {
   sets: string;
   reps: string;
   completed: boolean;
+  loggedWorkoutId?: string;
 };
 
 export type WorkoutPlanDay = {
@@ -118,7 +119,6 @@ export type UserProfile = {
 };
 
 export type ViewType = 'dashboard' | 'budget' | 'diet' | 'fitness' | 'notes' | 'settings';
-
 
 export type FavoriteMeal = {
   id: string;
