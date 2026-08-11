@@ -10,7 +10,9 @@ interface BudgetOverviewProps {
   onUpdateBuckets: (b: Bucket[]) => void;
   loans: Loan[];
   totalCash: number;
-  masterPool: number;
+  unassignedFunds: number;
+  totalSpent: number;
+  onViewAnalytics: () => void;
 }
 
 export function BudgetOverview({
@@ -19,7 +21,9 @@ export function BudgetOverview({
   onUpdateBuckets,
   loans,
   totalCash,
-  masterPool
+  unassignedFunds,
+  totalSpent,
+  onViewAnalytics
 }: BudgetOverviewProps) {
   const [isAddingBucket, setIsAddingBucket] = useState(false);
   const [newBucketName, setNewBucketName] = useState('');
@@ -100,7 +104,7 @@ export function BudgetOverview({
   };
 
   const handleMonthEndReview = () => {
-    if (!confirm('Close the month? Surplus from monthly budgets will be swept back into the Master Pool.')) return;
+    if (!confirm('Close the month? Surplus from monthly budgets will be swept back into Unassigned Funds.')) return;
     const updated = buckets.map(b => {
       const balance = getBucketBalance(b);
       if (b.type === 'monthly' && balance > 0) {
@@ -110,23 +114,32 @@ export function BudgetOverview({
       return b;
     });
     onUpdateBuckets(updated);
-    alert("Month closed! Surplus from monthly budgets has been swept into the Master Pool.");
+    alert("Month closed! Surplus from monthly budgets has been swept into Unassigned Funds.");
   };
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="surface-panel p-6">
           <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Total Cash</p>
           <p className="text-3xl font-mono font-bold text-zinc-900 dark:text-zinc-100">{totalCash.toFixed(2)}</p>
         </div>
         <div className="bg-emerald-900/20 border border-emerald-900/50 rounded-2xl p-6">
-          <p className="text-xs text-emerald-400 uppercase tracking-wider mb-2">Master Pool</p>
-          <p className={`text-3xl font-mono font-bold ${masterPool < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-            {masterPool.toFixed(2)}
+          <p className="text-xs text-emerald-400 uppercase tracking-wider mb-2">Unassigned Funds</p>
+          <p className={`text-3xl font-mono font-bold ${unassignedFunds < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+            {unassignedFunds.toFixed(2)}
           </p>
-          {masterPool < 0 && <p className="text-xs text-red-400 mt-2">Overbudgeted!</p>}
+          {unassignedFunds < 0 && <p className="text-xs text-red-400 mt-2">Overbudgeted!</p>}
         </div>
+        <button
+          type="button"
+          onClick={onViewAnalytics}
+          className="surface-panel p-6 text-left cursor-pointer hover:border-rose-500/50 transition-colors group"
+        >
+          <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2 group-hover:text-rose-400 transition-colors">Total Spent</p>
+          <p className="text-3xl font-mono font-bold text-rose-400">{totalSpent.toFixed(2)}</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-2 group-hover:text-rose-400/70 transition-colors">View breakdown &rarr;</p>
+        </button>
         <div className="surface-panel p-6">
           <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Daily Spend Odometer</p>
           <p className="text-3xl font-mono font-bold text-rose-400">{dailySpendOdometer.toFixed(2)}</p>

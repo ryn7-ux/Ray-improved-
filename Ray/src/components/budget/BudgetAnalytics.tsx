@@ -8,8 +8,9 @@ interface BudgetAnalyticsProps {
   buckets: Bucket[];
 }
 
-// Emerald-led palette to stay consistent with the app's accent color instead of the old indigo-first set.
-const COLORS = ['#10b981', '#34d399', '#f43f5e', '#eab308', '#3b82f6', '#8b5cf6', '#ec4899'];
+// Distinct hues so adjacent pie slices never look like the same color at a glance
+// (previously two very similar greens sat next to each other).
+const COLORS = ['#10b981', '#f43f5e', '#f59e0b', '#3b82f6', '#a855f7', '#ec4899', '#06b6d4', '#f97316'];
 
 export function BudgetAnalytics({ transactions, buckets }: BudgetAnalyticsProps) {
 
