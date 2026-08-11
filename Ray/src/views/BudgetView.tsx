@@ -35,8 +35,18 @@ export function BudgetView({
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
 
+  // Spending tied to a bucket was already "paid for" the moment that money was
+  // assigned to the bucket, so only unallocated spending should pull directly
+  // from the unassigned pool. Same logic for loans given from a specific bucket.
+  const unallocatedExpense = transactions
+    .filter(t => t.type === 'expense' && !t.bucketId)
+    .reduce((sum, t) => sum + t.amount, 0);
+
   const totalLoansGiven = loans.filter(l => l.direction === 'given').reduce((sum, l) => sum + l.principalAmount, 0);
   const totalLoansReceived = loans.filter(l => l.direction === 'received').reduce((sum, l) => sum + l.principalAmount, 0);
+  const unallocatedLoansGiven = loans
+    .filter(l => l.direction === 'given' && !l.fundingBucketId)
+    .reduce((sum, l) => sum + l.principalAmount, 0);
 
   const repaymentsReceived = repayments.filter(r => {
     const loan = loans.find(l => l.id === r.loanId);
@@ -48,9 +58,13 @@ export function BudgetView({
     return loan?.direction === 'received';
   }).reduce((sum, r) => sum + r.amount, 0);
 
+  // Total Cash: your real overall balance — goes down with every expense and loan given, no matter the bucket.
   const totalCash = totalIncome - totalExpense - totalLoansGiven + totalLoansReceived + repaymentsReceived - repaymentsMade;
   const totalAssigned = buckets.reduce((sum, b) => sum + b.assignedAmount, 0);
-  const masterPool = totalCash - totalAssigned;
+
+  // Unassigned Funds: what's left to hand out to buckets. Spending FROM a bucket
+  // doesn't touch this a second time — it was already deducted when assigned.
+  const unassignedFunds = totalIncome - unallocatedExpense - unallocatedLoansGiven + totalLoansReceived + repaymentsReceived - repaymentsMade - totalAssigned;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-12">
@@ -81,7 +95,9 @@ export function BudgetView({
             onUpdateBuckets={onUpdateBuckets}
             loans={loans}
             totalCash={totalCash}
-            masterPool={masterPool}
+            unassignedFunds={unassignedFunds}
+            totalSpent={totalExpense}
+            onViewAnalytics={() => setActiveTab('analytics')}
           />
         )}
 
