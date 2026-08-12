@@ -3,7 +3,8 @@ import { UserProfile, WeightLog } from '../../types';
 import { generateId } from '../../utils';
 import { Plus, Target, Ruler, Save, Pencil, Trash2, Check, X } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, Tooltip, CartesianGrid } from 'recharts';
-import { format } from 'date-fns';
+import { format, isToday, isSameDay } from 'date-fns';
+import { DateSelector } from '../DateSelector';
 
 interface BodyMetricsProps {
   userProfile: UserProfile;
@@ -14,6 +15,7 @@ interface BodyMetricsProps {
 
 export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUpdateWeightLogs }: BodyMetricsProps) {
   const [weight, setWeight] = useState('');
+  const [logDate, setLogDate] = useState(new Date());
   const [height, setHeight] = useState(userProfile.height?.toString() || '');
   const [targetWeight, setTargetWeight] = useState(userProfile.targetWeight?.toString() || '');
   const [age, setAge] = useState(userProfile.age?.toString() || '');
@@ -34,14 +36,26 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
     e.preventDefault();
     if (!weight) return;
 
-    const newLog: WeightLog = {
-      id: generateId(),
-      date: new Date().toISOString(),
-      weight: parseFloat(weight)
-    };
+    const parsedWeight = parseFloat(weight);
 
-    onUpdateWeightLogs([...weightLogs, newLog]);
+    // If an entry already exists for the chosen date, overwrite it instead of
+    // creating a second entry for the same day (matters more now that any past
+    // date can be picked, not just today).
+    const existing = weightLogs.find(l => isSameDay(new Date(l.date), logDate));
+
+    if (existing) {
+      onUpdateWeightLogs(weightLogs.map(l => l.id === existing.id ? { ...l, weight: parsedWeight } : l));
+    } else {
+      const newLog: WeightLog = {
+        id: generateId(),
+        date: logDate.toISOString(),
+        weight: parsedWeight
+      };
+      onUpdateWeightLogs([...weightLogs, newLog]);
+    }
+
     setWeight('');
+    setLogDate(new Date());
   };
 
   const startEdit = (log: WeightLog) => {
@@ -118,6 +132,17 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
               <Plus className="w-5 h-5 text-emerald-400" /> Log Weight
             </h3>
             <div>
+              <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Date</label>
+              {/* DateSelector's "next day" arrow disables itself once selectedDate is today,
+                  so a future date can never be picked through this control. */}
+              <DateSelector selectedDate={logDate} onDateChange={setLogDate} />
+              {weightLogs.some(l => isSameDay(new Date(l.date), logDate)) && (
+                <p className="text-xs text-amber-400 mt-2">
+                  Already have an entry for this date — logging will overwrite it.
+                </p>
+              )}
+            </div>
+            <div>
               <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-2">Weight (kg)</label>
               <input
                 type="number"
@@ -133,7 +158,7 @@ export function BodyMetrics({ userProfile, onUpdateUserProfile, weightLogs, onUp
               type="submit"
               className="w-full py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-colors font-bold text-xs uppercase tracking-wider"
             >
-              Log Today
+              {isToday(logDate) ? 'Log Today' : `Log for ${format(logDate, 'MMM d, yyyy')}`}
             </button>
           </form>
 
